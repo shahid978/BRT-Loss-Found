@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peshawar BRT Lost &amp; Found</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="nav-inner">
+        <div class="brand">
+          <span class="brand-icon">🚍</span>
+          <span class="brand-text">BRT Lost &amp; Found</span>
+        </div>
+        <nav class="nav-links">
+          <button class="nav-btn active" data-view="dashboard">Home</button>
+          <button class="nav-btn" data-view="report-lost">Report Lost</button>
+          <button class="nav-btn" data-view="report-found">Report Found</button>
+          <button class="nav-btn" data-view="search">Search</button>
+          <button class="nav-btn" data-view="my-reports">My Reports</button>
+        </nav>
+        <button id="darkModeToggle" class="icon-btn" title="Toggle dark mode">
+          🌙
+        </button>
+        <button id="navToggle" class="icon-btn nav-toggle" title="Menu">
+          ☰
+        </button>
+      </div>
+    </header>
+
+    <main id="app">
+      <!-- ================= DASHBOARD ================= -->
+      <section id="dashboard" class="view active">
+        <div class="hero">
+          <h1>Peshawar BRT Lost &amp; Found Management System</h1>
+          <p>
+            Lost something on the BRT? Found something that isn't yours? Report
+            it here and let the system find a possible match.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-view-link="report-lost">
+              Report Lost Item
+            </button>
+            <button class="btn btn-secondary" data-view-link="report-found">
+              Report Found Item
+            </button>
+            <button class="btn btn-outline" data-view-link="search">
+              Search Items
+            </button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-number" id="statLost">0</span>
+            <span class="stat-label">Total Lost</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" id="statFound">0</span>
+            <span class="stat-label">Total Found</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" id="statMatches">0</span>
+            <span class="stat-label">Possible Matches</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" id="statReturned">0</span>
+            <span class="stat-label">Returned</span>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-header">
+            <h2>Recent Reports</h2>
+            <button class="btn btn-small btn-outline" id="loadSampleBtn">
+              Load Demo Data
+            </button>
+          </div>
+          <div id="recentReports" class="cards-grid"></div>
+        </div>
+      </section>
+
+      <!-- ================= REPORT LOST ================= -->
+      <section id="report-lost" class="view">
+        <div class="form-card">
+          <h2>Report a Lost Item</h2>
+          <p class="form-sub">
+            Fill in as much detail as you can — it improves the chance of a
+            match.
+          </p>
+          <form id="lostForm" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="lostItemName">Item Name *</label>
+                <input type="text" id="lostItemName" name="itemName" required />
+              </div>
+              <div class="field">
+                <label for="lostCategory">Category *</label>
+                <select id="lostCategory" name="category" required>
+                  <option value="">Select category</option>
+                  <option>Mobile</option>
+                  <option>Wallet</option>
+                  <option>Bag</option>
+                  <option>Documents</option>
+                  <option>Keys</option>
+                  <option>Electronics</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="lostDescription">Description *</label>
+                <textarea
+                  id="lostDescription"
+                  name="description"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <div class="field">
+                <label for="lostColor">Color *</label>
+                <input type="text" id="lostColor" name="color" required />
+              </div>
+              <div class="field">
+                <label for="lostBrand">Brand (optional)</label>
+                <input type="text" id="lostBrand" name="brand" />
+              </div>
+              <div class="field">
+                <label for="lostStation">BRT Station / Route *</label>
+                <input type="text" id="lostStation" name="station" required />
+              </div>
+              <div class="field">
+                <label for="lostDate">Date Lost *</label>
+                <input type="date" id="lostDate" name="date" required />
+              </div>
+              <div class="field">
+                <label for="lostTime">Approximate Time (optional)</label>
+                <input type="time" id="lostTime" name="time" />
+              </div>
+              <div class="field">
+                <label for="lostContactName">Contact Name *</label>
+                <input
+                  type="text"
+                  id="lostContactName"
+                  name="contactName"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="lostContactNumber">Contact Number *</label>
+                <input
+                  type="tel"
+                  id="lostContactNumber"
+                  name="contactNumber"
+                  required
+                  placeholder="03xxxxxxxxx"
+                />
+              </div>
+              <div class="field full">
+                <label for="lostImage">Optional Image</label>
+                <input
+                  type="file"
+                  id="lostImage"
+                  name="image"
+                  accept="image/*"
+                />
+                <img
+                  class="image-preview hidden"
+                  id="lostImagePreview"
+                  alt="preview"
+                />
+              </div>
+            </div>
+            <div class="form-msg" id="lostFormMsg"></div>
+            <button type="submit" class="btn btn-primary">
+              Submit Lost Report
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= REPORT FOUND ================= -->
+      <section id="report-found" class="view">
+        <div class="form-card">
+          <h2>Report a Found Item</h2>
+          <p class="form-sub">
+            Thank you for helping return this item to its owner.
+          </p>
+          <form id="foundForm" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="foundItemName">Item Name *</label>
+                <input
+                  type="text"
+                  id="foundItemName"
+                  name="itemName"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="foundCategory">Category *</label>
+                <select id="foundCategory" name="category" required>
+                  <option value="">Select category</option>
+                  <option>Mobile</option>
+                  <option>Wallet</option>
+                  <option>Bag</option>
+                  <option>Documents</option>
+                  <option>Keys</option>
+                  <option>Electronics</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="foundDescription">Description *</label>
+                <textarea
+                  id="foundDescription"
+                  name="description"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <div class="field">
+                <label for="foundColor">Color *</label>
+                <input type="text" id="foundColor" name="color" required />
+              </div>
+              <div class="field">
+                <label for="foundBrand">Brand (optional)</label>
+                <input type="text" id="foundBrand" name="brand" />
+              </div>
+              <div class="field">
+                <label for="foundStation">BRT Station / Route *</label>
+                <input type="text" id="foundStation" name="station" required />
+              </div>
+              <div class="field">
+                <label for="foundDate">Date Found *</label>
+                <input type="date" id="foundDate" name="date" required />
+              </div>
+              <div class="field">
+                <label for="foundTime">Approximate Time (optional)</label>
+                <input type="time" id="foundTime" name="time" />
+              </div>
+              <div class="field">
+                <label for="foundFinderName">Finder Name *</label>
+                <input
+                  type="text"
+                  id="foundFinderName"
+                  name="contactName"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="foundContactNumber">Contact Number *</label>
+                <input
+                  type="tel"
+                  id="foundContactNumber"
+                  name="contactNumber"
+                  required
+                  placeholder="03xxxxxxxxx"
+                />
+              </div>
+              <div class="field full">
+                <label for="foundImage">Optional Image</label>
+                <input
+                  type="file"
+                  id="foundImage"
+                  name="image"
+                  accept="image/*"
+                />
+                <img
+                  class="image-preview hidden"
+                  id="foundImagePreview"
+                  alt="preview"
+                />
+              </div>
+            </div>
+            <div class="form-msg" id="foundFormMsg"></div>
+            <button type="submit" class="btn btn-primary">
+              Submit Found Report
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= SEARCH ================= -->
+      <section id="search" class="view">
+        <div class="section-block">
+          <h2>Search &amp; Filter Reports</h2>
+          <div class="filters-bar">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search by item name or description..."
+            />
+            <select id="filterType">
+              <option value="all">All</option>
+              <option value="lost">Lost</option>
+              <option value="found">Found</option>
+            </select>
+            <select id="filterCategory">
+              <option value="">All Categories</option>
+              <option>Mobile</option>
+              <option>Wallet</option>
+              <option>Bag</option>
+              <option>Documents</option>
+              <option>Keys</option>
+              <option>Electronics</option>
+              <option>Other</option>
+            </select>
+            <input
+              type="text"
+              id="filterStation"
+              placeholder="Filter by station/route"
+            />
+            <select id="sortOrder">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+          </div>
+          <div id="searchResults" class="cards-grid"></div>
+          <p id="noResultsMsg" class="no-results hidden">
+            No items found. Try adjusting your search or filters.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= MY REPORTS ================= -->
+      <section id="my-reports" class="view">
+        <div class="section-block">
+          <h2>My Reports / Management</h2>
+          <p class="form-sub">
+            All reports currently stored on this device. Edit, delete, or update
+            status here.
+          </p>
+          <div id="manageReports" class="cards-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================= ITEM DETAILS MODAL ================= -->
+    <div id="detailsModal" class="modal-overlay hidden">
+      <div class="modal">
+        <button class="modal-close" data-close-modal>&times;</button>
+        <div id="detailsContent"></div>
+      </div>
+    </div>
+
+    <!-- ================= CLAIM MODAL ================= -->
+    <div id="claimModal" class="modal-overlay hidden">
+      <div class="modal">
+        <button class="modal-close" data-close-modal>&times;</button>
+        <h2>Submit a Claim</h2>
+        <form id="claimForm" novalidate>
+          <input type="hidden" id="claimReportId" name="reportId" />
+          <div class="field">
+            <label for="claimOwnerName">Owner Name *</label>
+            <input type="text" id="claimOwnerName" name="ownerName" required />
+          </div>
+          <div class="field">
+            <label for="claimContactNumber">Contact Number *</label>
+            <input
+              type="tel"
+              id="claimContactNumber"
+              name="contactNumber"
+              required
+            />
+          </div>
+          <div class="field">
+            <label>Report ID</label>
+            <input type="text" id="claimReportIdDisplay" disabled />
+          </div>
+          <div class="field">
+            <label for="claimDetail"
+              >One identifying detail about the item *</label
+            >
+            <textarea
+              id="claimDetail"
+              name="identifyingDetail"
+              rows="2"
+              required
+            ></textarea>
+          </div>
+          <div class="form-msg" id="claimFormMsg"></div>
+          <button type="submit" class="btn btn-primary">Submit Claim</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= EDIT MODAL ================= -->
+    <div id="editModal" class="modal-overlay hidden">
+      <div class="modal">
+        <button class="modal-close" data-close-modal>&times;</button>
+        <h2>Edit Report</h2>
+        <form id="editForm" novalidate>
+          <input type="hidden" id="editReportId" />
+          <div class="form-grid" id="editFormFields"></div>
+          <div class="form-msg" id="editFormMsg"></div>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
